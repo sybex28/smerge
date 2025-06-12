@@ -53,7 +53,13 @@ class AudioMerger:
             title="Select Audio Files"
         )
         if files:
-            self.selected_files = sorted(files)  # Sort files by name
+            def natural_keys(text):
+                import re
+                def atoi(text):
+                    return int(text) if text.isdigit() else text
+                return [atoi(c) for c in re.split(r'(\d+)', os.path.basename(text))]
+            
+            self.selected_files = sorted(files, key=natural_keys)
             self.output_path = os.path.dirname(self.selected_files[0])
             self.update_files_label()
     
