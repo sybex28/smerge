@@ -6,41 +6,74 @@ class AudioMerger:
     def __init__(self):
         self.window = tk.Tk()
         self.window.title("Audio Merger")
-        self.window.geometry("600x400")
+        self.window.minsize(400, 300)  # Минимальный размер окна
         
         self.selected_files = []
         self.output_path = ""
+        
+        # Настройка адаптивной сетки
+        self.window.grid_columnconfigure(0, weight=1)
+        self.window.grid_rowconfigure(3, weight=1)  # Для списка файлов
         
         # Create GUI elements
         self.create_widgets()
         
     def create_widgets(self):
-        # Files selection button
-        self.select_btn = ttk.Button(self.window, text="Select Files", command=self.select_files)
-        self.select_btn.pack(pady=10)
-        
-        # Selected files display
-        self.files_label = ttk.Label(self.window, text="Selected files:", wraplength=550)
-        self.files_label.pack(pady=5)
-        
-        # Output filename entry
-        self.filename_label = ttk.Label(self.window, text="Output filename:")
-        self.filename_label.pack(pady=5)
-        self.filename_entry = ttk.Entry(self.window, width=50)
-        self.filename_entry.insert(0, "merged_audio")
-        self.filename_entry.pack(pady=5)
+        # Создаем фрейм для кнопок
+        button_frame = ttk.Frame(self.window)
+        button_frame.grid(row=0, column=0, pady=10, sticky='ew')
+        button_frame.grid_columnconfigure(0, weight=1)
+        button_frame.grid_columnconfigure(1, weight=1)
 
-        # Progress bar
-        self.progress = ttk.Progressbar(self.window, length=400, mode='determinate')
-        self.progress.pack(pady=10)
-        
-        # Status label
-        self.status_label = ttk.Label(self.window, text="")
-        self.status_label.pack(pady=5)
+        # Files selection button
+        self.select_btn = ttk.Button(button_frame, text="Select Files", command=self.select_files)
+        self.select_btn.grid(row=0, column=0, padx=5, sticky='ew')
         
         # Merge button
-        self.merge_btn = ttk.Button(self.window, text="Merge Files", command=self.merge_files)
-        self.merge_btn.pack(pady=10)
+        self.merge_btn = ttk.Button(button_frame, text="Merge Files", command=self.merge_files)
+        self.merge_btn.grid(row=0, column=1, padx=5, sticky='ew')
+
+        # Output filename frame
+        filename_frame = ttk.Frame(self.window)
+        filename_frame.grid(row=1, column=0, pady=5, sticky='ew')
+        filename_frame.grid_columnconfigure(1, weight=1)
+
+        # Output filename entry
+        self.filename_label = ttk.Label(filename_frame, text="Output filename:")
+        self.filename_label.grid(row=0, column=0, padx=5)
+        self.filename_entry = ttk.Entry(filename_frame)
+        self.filename_entry.insert(0, "merged_audio")
+        self.filename_entry.grid(row=0, column=1, sticky='ew', padx=5)
+
+        # Progress frame
+        progress_frame = ttk.Frame(self.window)
+        progress_frame.grid(row=2, column=0, pady=5, sticky='ew')
+        progress_frame.grid_columnconfigure(0, weight=1)
+
+        # Progress bar
+        self.progress = ttk.Progressbar(progress_frame, mode='determinate')
+        self.progress.grid(row=0, column=0, sticky='ew', padx=10)
+        
+        # Status label
+        self.status_label = ttk.Label(progress_frame, text="")
+        self.status_label.grid(row=1, column=0, pady=5)
+
+        # Files list frame
+        files_frame = ttk.Frame(self.window)
+        files_frame.grid(row=3, column=0, sticky='nsew', padx=10, pady=5)
+        files_frame.grid_columnconfigure(0, weight=1)
+
+        # Selected files display with word wrap
+        self.files_label = ttk.Label(files_frame, wraplength=380)
+        self.files_label.grid(row=0, column=0, sticky='ew')
+
+        # Bind window resize event to update label wraplength
+        self.window.bind('<Configure>', self.on_window_resize)
+
+    def on_window_resize(self, event):
+        # Update label wraplength when window is resized
+        if hasattr(self, 'files_label'):
+            self.files_label.configure(wraplength=event.width - 40)
 
     def update_status(self, message, progress_value):
         self.status_label.config(text=message)
@@ -113,5 +146,3 @@ class AudioMerger:
 if __name__ == "__main__":
     app = AudioMerger()
     app.window.mainloop()
-
-git --version
