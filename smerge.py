@@ -93,6 +93,11 @@ class AudioMerger:
                            foreground=self.colors['text_secondary'],
                            font=('Segoe UI', 9))
         
+        self.style.configure('Files.TLabel',
+                           background=self.colors['bg'],
+                           foreground=self.colors['text_secondary'],
+                           font=('Segoe UI', 9))
+        
         # Настройка стилей для Button
         self.style.configure('Accent.TButton',
                            background=self.colors['accent'],
@@ -150,21 +155,14 @@ class AudioMerger:
         title_label = ttk.Label(main_container, text="🎵 Audio Merger", style='Title.TLabel')
         title_label.grid(row=0, column=0, pady=(0, 20))
         
-        # Карточка с выбранными файлами
-        files_card = ttk.Frame(main_container, style='Card.TFrame')
-        files_card.grid(row=1, column=0, sticky='ew', pady=(0, 15))
-        files_card.grid_columnconfigure(0, weight=1)
-        
-        files_title = ttk.Label(files_card, text="Selected Files", style='Card.TLabel', font=('Segoe UI', 10, 'bold'))
-        files_title.grid(row=0, column=0, sticky='w', padx=15, pady=(15, 5))
-        
-        self.files_label = ttk.Label(files_card, text="No files selected", style='Card.TLabel', wraplength=450)
-        self.files_label.grid(row=1, column=0, sticky='ew', padx=15, pady=(0, 15))
-        
         # Кнопка выбора файлов
         self.select_btn = ttk.Button(main_container, text="📁 Select Audio Files", 
                                    command=self.select_files, style='Accent.TButton')
-        self.select_btn.grid(row=2, column=0, pady=(0, 15), sticky='ew')
+        self.select_btn.grid(row=1, column=0, pady=(0, 10), sticky='ew')
+        
+        # Лейбл со списком выбранных файлов
+        self.files_label = ttk.Label(main_container, text="", style='Files.TLabel', wraplength=450)
+        self.files_label.grid(row=2, column=0, pady=(0, 15), sticky='ew')
         
         # Карточка настроек вывода
         self.output_card = ttk.Frame(main_container, style='Card.TFrame')
@@ -231,7 +229,12 @@ class AudioMerger:
                 self.selected_files = sorted(files, key=natural_keys)
                 self.output_path = os.path.dirname(self.selected_files[0])
                 logging.debug(f"Output path set to: {self.output_path}")
-                self.update_files_label()
+                
+                # Создаем строку с именами файлов через запятую
+                files_string = ", ".join([os.path.basename(f) for f in self.selected_files])
+                logging.info(f"Selected files: {files_string}")
+                
+                self.update_ui_after_selection()
             else:
                 logging.info("No files selected")
         except Exception as e:
@@ -239,20 +242,15 @@ class AudioMerger:
             logging.error(traceback.format_exc())
             messagebox.showerror("Error", f"Error selecting files: {str(e)}")
 
-    def update_files_label(self):
-        if self.selected_files:
-            files_text = f"{len(self.selected_files)} files selected:\n" + "\n".join(
-                [f"• {os.path.basename(f)}" for f in self.selected_files[:5]]
-            )
-            if len(self.selected_files) > 5:
-                files_text += f"\n... and {len(self.selected_files) - 5} more files"
-        else:
-            files_text = "No files selected"
-            
-        self.files_label.config(text=files_text)
-    
+    def update_ui_after_selection(self):
         # Show/hide appropriate elements
         if self.selected_files:
+            # Обновляем текст с выбранными файлами
+            files_count = len(self.selected_files)
+            files_names = [f"[{os.path.basename(f)}]" for f in self.selected_files]
+            files_text = f"Selected {files_count} files: {', '.join(files_names)}"
+            self.files_label.config(text=files_text)
+            
             # Показать настройки вывода
             self.output_card.grid()
             
@@ -268,6 +266,7 @@ class AudioMerger:
             self.select_btn.config(text="📁 Change Selection")
         else:
             # Hide elements if no files
+            self.files_label.config(text="")
             self.output_card.grid_remove()
             self.merge_frame.grid_remove()
             self.select_btn.config(text="📁 Select Audio Files")
@@ -323,9 +322,11 @@ class AudioMerger:
             logging.error(traceback.format_exc())
             messagebox.showerror("Error", f"An error occurred: {str(e)}")
             self.update_status("Error occurred during merge", 0)
+        finally:
+            # Включить кнопки обратно
+            self.select_btn.config(state='normal')
         
-        self.progress.grid_remove()
-        self.status_label.grid_remove()
+        self.progress_frame.grid_remove()
         self.merge_frame.grid()
 
 if __name__ == "__main__":
