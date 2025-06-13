@@ -120,31 +120,43 @@ class AudioMerger:
                       background=[('active', self.colors['accent_hover']),
                                 ('pressed', self.colors['accent'])])
         
-        # Вторичная кнопка (зеленая)
-        self.style.configure('Secondary.TButton',
-                           background=self.colors['secondary_accent'],
+
+
+
+        # Голубая кнопка для merge
+        self.style.configure('Blue.TButton',
+                           background='#0ea5e9',  # Голубой
                            foreground='white',
                            borderwidth=0,
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
                            padding=(15, 10))
         
-        self.style.map('Secondary.TButton',
-                      background=[('active', self.colors['secondary_hover']),
-                                ('pressed', self.colors['secondary_accent'])])
+
+
+
+        self.style.map('Blue.TButton',
+                      background=[('active', '#38bdf8'),  # Светло-голубой при наведении
+                                ('pressed', '#0ea5e9')])
         
-        # Стиль для кнопки выбора файлов (градиентный эффект через цвет)
-        self.style.configure('Select.TButton',
-                           background='#e11d48',  # Красно-розовый
+
+
+
+        # Серая кнопка для change selection
+        self.style.configure('Gray.TButton',
+                           background='#6b7280',  # Серый
                            foreground='white',
                            borderwidth=0,
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
                            padding=(20, 12))
         
-        self.style.map('Select.TButton',
-                      background=[('active', '#f43f5e'),  # Светло-розовый при наведении
-                                ('pressed', '#e11d48')])
+
+
+
+        self.style.map('Gray.TButton',
+                      background=[('active', '#9ca3af'),  # Светло-серый при наведении
+                                ('pressed', '#6b7280')])
         
         # Настройка стилей для Entry
         self.style.configure('Dark.TEntry',
@@ -161,11 +173,11 @@ class AudioMerger:
         
         # Настройка стилей для Progressbar
         self.style.configure('Dark.Horizontal.TProgressbar',
-                           background=self.colors['accent'],
+                           background='#0ea5e9',  # Голубой цвет как у кнопки merge
                            troughcolor=self.colors['secondary_bg'],
                            borderwidth=0,
-                           lightcolor=self.colors['accent'],
-                           darkcolor=self.colors['accent'])
+                           lightcolor='#0ea5e9',  # Голубой цвет
+                           darkcolor='#0ea5e9')   # Голубой цвет)
         
     def create_widgets(self):
         # Основной контейнер с отступами
@@ -177,9 +189,11 @@ class AudioMerger:
         title_label = ttk.Label(main_container, text="🎵 Audio Merger", style='Title.TLabel')
         title_label.grid(row=0, column=0, pady=(0, 10))
         
-        # Кнопка выбора файлов (теперь красно-розовая)
+
+        # Кнопка выбора файлов (теперь серая)
         self.select_btn = ttk.Button(main_container, text="📁 Change Selection", 
-                                   command=self.select_files, style='Select.TButton')
+
+                                   command=self.select_files, style='Gray.TButton')
         self.select_btn.grid(row=1, column=0, pady=(0, 6), sticky='ew')
         
 
@@ -218,7 +232,7 @@ class AudioMerger:
         self.merge_frame.grid_columnconfigure(0, weight=1)
         
         self.merge_btn = ttk.Button(self.merge_frame, text="🔗 Merge Audio Files", 
-                                  command=self.merge_files, style='Secondary.TButton')
+                                  command=self.merge_files, style='Blue.TButton')
         self.merge_btn.grid(row=0, column=0, sticky='ew')
         
         # Bind window resize event
@@ -234,7 +248,7 @@ class AudioMerger:
         req_height = self.window.winfo_reqheight()
         
         # Добавляем больший запас для всех элементов
-        min_width = max(450, req_width + 80)
+        min_width = max(500, req_width + 80)  # Изменили с 450 на 500
         min_height = max(240, req_height + 40)
         
         self.window.minsize(min_width, min_height)
@@ -311,7 +325,7 @@ class AudioMerger:
     def merge_files(self):
         if not self.selected_files:
             logging.warning("Attempted to merge with no files selected")
-            messagebox.showwarning("Warning", "Please select files first!")
+            self.show_completion_message("⚠️ Please select files first!", is_error=True)
             return
         
         logging.info("Starting file merge process")
@@ -352,18 +366,61 @@ class AudioMerger:
             
             logging.info("Merge completed successfully")
             self.update_status("Merge complete!", 100)
-            messagebox.showinfo("Success", f"Files merged successfully!\nSaved as: {output_path}")
+            
+            # Показать информацию о завершении в интерфейсе вместо popup
+            self.show_completion_message(f"✅ Files merged successfully!\nSaved as: {os.path.basename(output_path)}\nLocation: {os.path.dirname(output_path)}")
             
         except Exception as e:
             logging.error("Error during merge process:")
             logging.error(traceback.format_exc())
-            messagebox.showerror("Error", f"An error occurred: {str(e)}")
-            self.update_status("Error occurred during merge", 0)
+            self.show_completion_message(f"❌ An error occurred: {str(e)}", is_error=True)
         finally:
             # Включить кнопки обратно
             self.select_btn.config(state='normal')
         
         self.progress_frame.grid_remove()
+        self.merge_frame.grid()
+
+    def show_completion_message(self, message, is_error=False):
+        """Показывает сообщение о завершении в интерфейсе"""
+        # Скрыть прогрессбар
+        self.progress_frame.grid_remove()
+        
+        # Создать фрейм для сообщения о завершении
+        if not hasattr(self, 'completion_frame'):
+            self.completion_frame = ttk.Frame(self.merge_frame.master, style='Dark.TFrame')
+        
+        # Очистить фрейм
+        for widget in self.completion_frame.winfo_children():
+            widget.destroy()
+        
+        # Создать лейбл с сообщением
+        completion_style = 'Dark.TLabel'
+        if is_error:
+            # Можно добавить специальный стиль для ошибок
+            completion_style = 'Dark.TLabel'
+        
+        completion_label = ttk.Label(self.completion_frame, text=message, 
+                                   style=completion_style, justify='center',
+                                   font=('Segoe UI', 10))
+        completion_label.grid(row=0, column=0, pady=(0, 10))
+        
+        # Кнопка для нового объединения
+        new_merge_btn = ttk.Button(self.completion_frame, text="🔗 Merge Again", 
+                                 command=self.reset_for_new_merge, style='Blue.TButton')
+        new_merge_btn.grid(row=1, column=0, sticky='ew')
+        
+        # Показать фрейм завершения
+        self.completion_frame.grid(row=5, column=0, sticky='ew')
+        self.completion_frame.grid_columnconfigure(0, weight=1)
+
+    def reset_for_new_merge(self):
+        """Сброс интерфейса для нового объединения"""
+        # Скрыть фрейм завершения
+        if hasattr(self, 'completion_frame'):
+            self.completion_frame.grid_remove()
+        
+        # Показать обратно кнопку merge
         self.merge_frame.grid()
 
 if __name__ == "__main__":
