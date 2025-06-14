@@ -4,6 +4,7 @@ from tkinter import filedialog, ttk, messagebox
 import traceback
 import logging
 from datetime import datetime
+import hashlib  # Добавляем для более точной проверки дубликатов
 
 # Настройка логирования
 log_filename = f"smerge_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
@@ -21,8 +22,11 @@ class AudioMerger:
         logging.info("Initializing Audio Merger application")
         self.window = tk.Tk()
         self.window.title("Audio Merger")
-        self.window.minsize(400, 300)
-        self.window.resizable(True, True)
+
+
+
+        self.window.minsize(500, 200)  # Увеличили минимальную высоту со 120 до 200
+        self.window.resizable(True, True)  # Изменили с (True, False) на (True, True) - теперь можно изменять и по высоте
         
         # Скрываем окно при запуске
         self.window.withdraw()
@@ -104,13 +108,20 @@ class AudioMerger:
                            background=self.colors['bg'],
                            foreground=self.colors['text_secondary'],
 
-                           font=('Segoe UI', 8))  # Уменьшили с 9 до 8
+
+                           font=('Segoe UI', 8))
         
         # Добавляем стиль для жирного текста файлов (без изменения фона)
         self.style.configure('FilesBold.TLabel',
                            background=self.colors['bg'],  # Тот же фон
                            foreground=self.colors['text_secondary'],  # Тот же цвет текста
                            font=('Segoe UI', 8, 'bold'))  # Только жирный шрифт
+        
+        # Добавляем стиль для успешного сообщения (голубой цвет как у кнопки merge + жирный шрифт)
+        self.style.configure('Success.TLabel',
+                           background=self.colors['bg'],
+                           foreground='#0ea5e9',  # Голубой цвет как у кнопки merge
+                           font=('Segoe UI', 10, 'bold'))  # Добавили 'bold'
         
         # Обновленные стили для кнопок
         # Основная акцентная кнопка (фиолетовая)
@@ -189,21 +200,28 @@ class AudioMerger:
     def create_widgets(self):
         # Основной контейнер с отступами
         main_container = ttk.Frame(self.window, style='Dark.TFrame')
-        main_container.grid(row=0, column=0, sticky='nsew', padx=20, pady=10)
+        main_container.grid(row=0, column=0, sticky='nsew', padx=20, pady=(8, 5))  # Уменьшили нижний отступ с 8 до 5
         main_container.grid_columnconfigure(0, weight=1)
         
-        # Заголовок
-        title_label = ttk.Label(main_container, text="🎵 Audio Merger", style='Title.TLabel')
-        title_label.grid(row=0, column=0, pady=(0, 10))
+
+
+
+        # Убираем заголовок:
+        # title_label = ttk.Label(main_container, text="🎵 Audio Merger", style='Title.TLabel')
+        # title_label.grid(row=0, column=0, pady=(0, 10))
         
-        # Кнопка выбора файлов (теперь серая)
-        self.select_btn = ttk.Button(main_container, text="📁 Change Selection", 
+
+
+        # Кнопка выбора файлов (без иконки)
+        self.select_btn = ttk.Button(main_container, text="Change Selection", 
                                    command=self.select_files, style='Gray.TButton')
-        self.select_btn.grid(row=1, column=0, pady=(0, 6), sticky='ew')
+
+        self.select_btn.grid(row=0, column=0, pady=(0, 6), sticky='ew')  # Изменили row с 1 на 0
         
         # Фрейм для информации о файлах
         self.files_info_frame = ttk.Frame(main_container, style='Dark.TFrame')
-        self.files_info_frame.grid(row=2, column=0, pady=(0, 8), sticky='ew')
+
+        self.files_info_frame.grid(row=1, column=0, pady=(0, 8), sticky='ew')  # Изменили row с 2 на 1
         self.files_info_frame.grid_columnconfigure(0, weight=1)
         
         # Лейбл с информацией о количестве файлов и пути (обычный шрифт)
@@ -218,7 +236,8 @@ class AudioMerger:
         
         # Карточка настроек вывода
         self.output_card = ttk.Frame(main_container, style='Card.TFrame')
-        self.output_card.grid(row=3, column=0, sticky='ew', pady=(0, 8))
+
+        self.output_card.grid(row=2, column=0, sticky='ew', pady=(0, 8))  # Изменили row с 3 на 2
         self.output_card.grid_columnconfigure(1, weight=1)
         
         filename_label = ttk.Label(self.output_card, text="Filename:", style='Card.TLabel')
@@ -229,7 +248,8 @@ class AudioMerger:
         
         # Прогресс бар и статус (скрыт изначально)
         self.progress_frame = ttk.Frame(main_container, style='Dark.TFrame')
-        self.progress_frame.grid(row=4, column=0, sticky='ew', pady=(0, 8))
+
+        self.progress_frame.grid(row=3, column=0, sticky='ew', pady=(0, 8))  # Изменили row с 4 на 3
         self.progress_frame.grid_columnconfigure(0, weight=1)
         self.progress_frame.grid_remove()  # Скрываем изначально
         
@@ -241,11 +261,13 @@ class AudioMerger:
         
         # Кнопка объединения (скрыта до загрузки файлов)
         self.merge_frame = ttk.Frame(main_container, style='Dark.TFrame')
-        self.merge_frame.grid(row=5, column=0, sticky='ew')
+
+        self.merge_frame.grid(row=4, column=0, sticky='ew')  # Изменили row с 5 на 4
         self.merge_frame.grid_columnconfigure(0, weight=1)
         self.merge_frame.grid_remove()  # Скрываем до загрузки файлов
         
-        self.merge_btn = ttk.Button(self.merge_frame, text="🔗 Merge Audio Files", 
+
+        self.merge_btn = ttk.Button(self.merge_frame, text="Merge Audio Files", 
                                   command=self.merge_files, style='Blue.TButton')
         self.merge_btn.grid(row=0, column=0, sticky='ew')
         
@@ -261,11 +283,24 @@ class AudioMerger:
         req_width = self.window.winfo_reqwidth()
         req_height = self.window.winfo_reqheight()
         
-        # Добавляем больший запас для всех элементов
-        min_width = max(500, req_width + 80)  # Изменили с 450 на 500
-        min_height = max(240, req_height + 40)
+        # Получаем текущий минимальный размер
+        current_min_width = self.window.minsize()[0]
+        
+        # Ширину оставляем как есть, только высоту обновляем
+
+
+        min_width = current_min_width
+        min_height = max(200, req_height + 20)  # Уменьшили запас с 40 до 20
         
         self.window.minsize(min_width, min_height)
+        
+        # Если текущий размер окна меньше требуемого по высоте, увеличиваем его
+        current_width = self.window.winfo_width()
+        current_height = self.window.winfo_height()
+        
+        if current_height < min_height:
+
+            self.window.geometry(f"{current_width}x{min_height}")
 
     def on_window_resize(self, event):
         # Update label wraplength when window is resized
@@ -352,8 +387,78 @@ class AudioMerger:
         self.files_info_label.config(text=info_text)
         self.files_list_label.config(text=files_text)
 
+    def check_for_duplicates(self):
+        """Проверяет файлы на дубликаты по размеру и содержимому"""
+        logging.info("Checking for duplicate files")
+        
+        file_info = {}
+        duplicates = []
+        
+        for i, file_path in enumerate(self.selected_files, 1):
+            try:
+                # Получаем размер файла
+                file_size = os.path.getsize(file_path)
+                
+                # Обновляем прогресс
+                progress_value = (i / len(self.selected_files)) * 50  # Первые 50% прогресса
+                self.update_status(f"Analyzing {i}/{len(self.selected_files)}: {os.path.basename(file_path)}", progress_value)
+                
+                # Создаем ключ для группировки (размер файла)
+                size_key = file_size
+                
+                if size_key not in file_info:
+                    file_info[size_key] = []
+                
+                file_info[size_key].append(file_path)
+                
+            except Exception as e:
+                logging.warning(f"Could not analyze file {file_path}: {str(e)}")
+        
+        # Проверяем группы файлов с одинаковым размером
+        for size, files in file_info.items():
+            if len(files) > 1:
+                # Если файлы одинакового размера, проверяем их содержимое более детально
+                confirmed_duplicates = self.check_file_content_similarity(files)
+                if confirmed_duplicates:
+                    duplicates.extend(confirmed_duplicates)
+        
+        return duplicates
+
+    def check_file_content_similarity(self, files):
+        """Проверяет похожесть содержимого файлов через хеш первых и последних байтов"""
+        file_hashes = {}
+        duplicates = []
+        
+        for file_path in files:
+            try:
+                # Читаем первые и последние 8KB файла для быстрого сравнения
+                with open(file_path, 'rb') as f:
+                    # Первые 8KB
+                    first_chunk = f.read(8192)
+                    # Переходим к концу файла
+                    f.seek(-min(8192, os.path.getsize(file_path)), 2)
+                    last_chunk = f.read(8192)
+                    
+                    # Создаем хеш из первого и последнего куска
+                    content_hash = hashlib.md5(first_chunk + last_chunk).hexdigest()
+                    
+                    if content_hash not in file_hashes:
+                        file_hashes[content_hash] = []
+                    
+                    file_hashes[content_hash].append(file_path)
+                    
+            except Exception as e:
+                logging.warning(f"Could not read file content {file_path}: {str(e)}")
+        
+        # Находим группы с одинаковыми хешами
+        for hash_key, hash_files in file_hashes.items():
+            if len(hash_files) > 1:
+                duplicates.append(hash_files)
+        
+        return duplicates
+
     def load_files(self):
-        """Имитация загрузки файлов с прогрессбаром"""
+        """Загрузка файлов с проверкой на дубликаты"""
         logging.info("Starting files loading process")
         
         # Отключить кнопку выбора во время загрузки
@@ -364,40 +469,60 @@ class AudioMerger:
         self.progress['value'] = 0
         
         try:
-            file_count = len(self.selected_files)
-            progress_per_file = 100 / file_count
+            # Сначала проверяем на дубликаты
+            duplicates = self.check_for_duplicates()
             
-
-
-
+            if duplicates:
+                # Формируем сообщение о найденных дубликатах
+                duplicate_message = "Found potentially duplicate files:\n\n"
+                for i, duplicate_group in enumerate(duplicates, 1):
+                    duplicate_message += f"Group {i}:\n"
+                    for file_path in duplicate_group:
+                        duplicate_message += f"  • {os.path.basename(file_path)}\n"
+                    duplicate_message += "\n"
+                
+                duplicate_message += "These files have the same size and similar content.\nDo you want to continue anyway?"
+                
+                # Показываем предупреждение
+                result = messagebox.askyesno(
+                    "Duplicate Files Detected", 
+                    duplicate_message,
+                    icon='warning'
+                )
+                
+                if not result:
+                    logging.info("User chose to cancel due to duplicates")
+                    self.progress_frame.grid_remove()
+                    self.select_btn.config(state='normal')
+                    return
+                else:
+                    logging.info("User chose to continue despite duplicates")
+            
+            # Продолжаем загрузку файлов
+            file_count = len(self.selected_files)
+            
             for i, file in enumerate(self.selected_files, 1):
                 current_file = os.path.basename(file)
                 logging.info(f"Loading file {i}/{file_count}: {current_file}")
                 
-                # Обновляем прогресс
-                progress_value = i * progress_per_file
-                self.update_status(f"📂 Loading {i}/{file_count}: {current_file}", progress_value)
+                # Обновляем прогресс (вторые 50%)
+                progress_value = 50 + ((i / file_count) * 50)
+                self.update_status(f"Loading {i}/{file_count}: {current_file}", progress_value)
                 
-                # Имитация времени загрузки (можно убрать или уменьшить)
+                # Имитация времени загрузки
                 import time
-                time.sleep(0.1)  # Небольшая задержка для демонстрации
+                time.sleep(0.05)  # Уменьшили время для более быстрой загрузки
             
-
-
             logging.info("Files loaded successfully")
-            self.update_status("✅ Files loaded successfully!", 100)
+            self.update_status("Files loaded successfully!", 100)
             
-
-
             # Небольшая пауза перед показом интерфейса объединения
             self.window.after(500, self.show_merge_interface)
             
-
-
         except Exception as e:
             logging.error("Error during files loading:")
             logging.error(traceback.format_exc())
-            self.update_status(f"❌ Error loading files: {str(e)}", 0)
+            self.update_status(f"Error loading files: {str(e)}", 0)
         finally:
             # Включить кнопку выбора обратно
             self.select_btn.config(state='normal')
@@ -422,8 +547,32 @@ class AudioMerger:
     def merge_files(self):
         if not self.selected_files:
             logging.warning("Attempted to merge with no files selected")
-            self.show_completion_message("⚠️ Please select files first!", is_error=True)
+
+            self.show_completion_message("Please select files first!", is_error=True)
             return
+        
+        # Проверяем имя файла и существование
+        output_filename = self.filename_entry.get().strip()
+        if not output_filename:
+            self.show_completion_message("Please enter a filename!", is_error=True)
+            return
+            
+        output_format = os.path.splitext(self.selected_files[0])[1]
+        output_path = os.path.join(self.output_path, f"{output_filename}{output_format}")
+        
+        # Проверяем, существует ли файл
+        if os.path.exists(output_path):
+            logging.info(f"File already exists: {output_path}")
+            result = messagebox.askyesno(
+                "File Exists", 
+                f"File '{output_filename}{output_format}' already exists.\n\nDo you want to replace it?",
+                icon='warning'
+            )
+            if not result:
+                logging.info("User chose not to replace existing file")
+                return
+            else:
+                logging.info("User chose to replace existing file")
         
         logging.info("Starting file merge process")
         
@@ -434,20 +583,24 @@ class AudioMerger:
         
         # Отключить кнопки во время обработки
         self.select_btn.config(state='disabled')
+        self.filename_entry.config(state='disabled')
         
         try:
-            output_filename = self.filename_entry.get().strip()
-            if not output_filename:
-                output_filename = "merged_audio"  # Используем по умолчанию если поле пустое
-                
+
+
+
+
             logging.info(f"Output filename: {output_filename}")
-            
-            self.update_status("🔄 Preparing to merge...", 10)
-            output_format = os.path.splitext(self.selected_files[0])[1]
-            output_path = os.path.join(self.output_path, f"{output_filename}{output_format}")
+
+
+
+
             logging.debug(f"Full output path: {output_path}")
             
-            self.update_status("📝 Creating output file...", 20)
+
+            self.update_status("Preparing to merge...", 10)
+            
+            self.update_status("Creating output file...", 20)
             with open(output_path, 'wb') as outfile:
                 file_count = len(self.selected_files)
                 progress_per_file = 60 / file_count
@@ -455,7 +608,8 @@ class AudioMerger:
                 for i, file in enumerate(self.selected_files, 1):
                     current_file = os.path.basename(file)
                     logging.info(f"Processing file {i}/{file_count}: {current_file}")
-                    self.update_status(f"🎵 Processing {i}/{file_count}: {current_file}", 
+
+                    self.update_status(f"Processing {i}/{file_count}: {current_file}", 
                                      20 + (i * progress_per_file))
                     
                     with open(file, 'rb') as infile:
@@ -464,16 +618,20 @@ class AudioMerger:
             logging.info("Merge completed successfully")
             self.update_status("Merge complete!", 100)
             
-            # Показать информацию о завершении в интерфейсе вместо popup
-            self.show_completion_message(f"✅ Files merged successfully!\nSaved as: {os.path.basename(output_path)}\nLocation: {os.path.dirname(output_path)}")
+            # Показать информацию о завершении в интерфейсе (нормализуем путь для правильных разделителей)
+            normalized_path = os.path.normpath(output_path)
+            self.show_completion_message(f"Files merged successfully!\nSaved as: {normalized_path}")
             
         except Exception as e:
             logging.error("Error during merge process:")
             logging.error(traceback.format_exc())
-            self.show_completion_message(f"❌ An error occurred: {str(e)}", is_error=True)
+
+
+            self.show_completion_message(f"An error occurred: {str(e)}", is_error=True)
         finally:
             # Включить кнопки обратно
             self.select_btn.config(state='normal')
+            self.filename_entry.config(state='disabled')  # Оставляем отключенным до нового объединения
         
         self.progress_frame.grid_remove()
         self.merge_frame.grid()
@@ -491,25 +649,49 @@ class AudioMerger:
         for widget in self.completion_frame.winfo_children():
             widget.destroy()
         
-        # Создать лейбл с сообщением
-        completion_style = 'Dark.TLabel'
         if is_error:
-            # Можно добавить специальный стиль для ошибок
-            completion_style = 'Dark.TLabel'
-        
-        completion_label = ttk.Label(self.completion_frame, text=message, 
-                                   style=completion_style, justify='center',
-                                   font=('Segoe UI', 10))
-        completion_label.grid(row=0, column=0, pady=(0, 10))
+            # Для ошибок показываем весь текст обычным стилем
+            completion_label = ttk.Label(self.completion_frame, text=message, 
+                                       style='Dark.TLabel', justify='left',
+                                       font=('Segoe UI', 10))
+
+            completion_label.grid(row=0, column=0, pady=(0, 8), sticky='w')  # Уменьшили с 10 до 8
+        else:
+            # Для успеха разделяем сообщение на части
+            lines = message.split('\n')
+            
+
+            # Первая строка голубым цветом и жирным шрифтом
+            success_label = ttk.Label(self.completion_frame, text=lines[0], 
+                                    style='Success.TLabel', justify='left')
+
+            success_label.configure(font=('Segoe UI', 10, 'bold'))
+            success_label.grid(row=0, column=0, sticky='w')
+            
+            # Остальные строки обычным цветом
+            if len(lines) > 1:
+                remaining_text = '\n'.join(lines[1:])
+                details_label = ttk.Label(self.completion_frame, text=remaining_text, 
+                                        style='Dark.TLabel', justify='left',
+                                        font=('Segoe UI', 10))
+
+                details_label.grid(row=1, column=0, pady=(2, 8), sticky='w')  # Уменьшили с 10 до 8
+            else:
+                # Если только одна строка, добавляем отступ
+
+                success_label.grid(pady=(0, 8))  # Уменьшили с 10 до 8
         
         # Кнопка для нового объединения
-        new_merge_btn = ttk.Button(self.completion_frame, text="🔗 Merge Again", 
+        new_merge_btn = ttk.Button(self.completion_frame, text="Merge Again", 
                                  command=self.reset_for_new_merge, style='Blue.TButton')
-        new_merge_btn.grid(row=1, column=0, sticky='ew')
+        new_merge_btn.grid(row=2, column=0, sticky='ew')
         
         # Показать фрейм завершения
-        self.completion_frame.grid(row=5, column=0, sticky='ew')
+        self.completion_frame.grid(row=4, column=0, sticky='ew')
         self.completion_frame.grid_columnconfigure(0, weight=1)
+        
+        # Обновить размер окна после добавления элементов
+        self.window.after(50, self.update_min_size)
 
     def reset_for_new_merge(self):
         """Сброс интерфейса для нового объединения"""
@@ -517,8 +699,14 @@ class AudioMerger:
         if hasattr(self, 'completion_frame'):
             self.completion_frame.grid_remove()
         
+        # Включить поле ввода обратно
+        self.filename_entry.config(state='normal')
+        
         # Показать обратно кнопку merge
         self.merge_frame.grid()
+        
+        # Установить фокус на поле ввода
+        self.focus_filename_entry()
 
 if __name__ == "__main__":
     logging.info("Starting application")
