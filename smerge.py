@@ -5,6 +5,8 @@ import traceback
 import logging
 from datetime import datetime
 import hashlib  # Добавляем для более точной проверки дубликатов
+import wave
+import struct
 
 # Настройка логирования
 log_filename = f"smerge_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
@@ -19,11 +21,9 @@ logging.basicConfig(
 
 class AudioMerger:
     def __init__(self):
-        logging.info("Initializing Audio Merger application")
+        logging.info("Initializing smerge application")
         self.window = tk.Tk()
-        self.window.title("Audio Merger")
-
-
+        self.window.title("smerge")
 
         self.window.minsize(500, 200)  # Увеличили минимальную высоту со 120 до 200
         self.window.resizable(True, True)  # Изменили с (True, False) на (True, True) - теперь можно изменять и по высоте
@@ -61,6 +61,106 @@ class AudioMerger:
         
         # Сразу открываем диалог выбора файлов
         self.window.after(100, self.select_files)
+
+    def get_audio_duration(self, file_path):
+        """Получает продолжительность аудиофайла"""
+        try:
+            file_ext = os.path.splitext(file_path)[1].lower()
+            
+            if file_ext == '.wav':
+                return self.get_wav_duration(file_path)
+            elif file_ext == '.mp3':
+                return self.get_mp3_duration(file_path)
+            else:
+                # Для других форматов пытаемся определить по размеру файла (приблизительно)
+                return self.estimate_duration_by_size(file_path)
+                
+        except Exception as e:
+            logging.warning(f"Could not determine duration for {file_path}: {str(e)}")
+            return None
+
+    def get_wav_duration(self, file_path):
+        """Получает продолжительность WAV файла"""
+        try:
+            with wave.open(file_path, 'rb') as wav_file:
+                frames = wav_file.getnframes()
+                sample_rate = wav_file.getframerate()
+                duration = frames / float(sample_rate)
+                return duration
+        except Exception as e:
+            logging.warning(f"Error reading WAV file {file_path}: {str(e)}")
+            return None
+
+    def get_mp3_duration(self, file_path):
+        """Получает приблизительную продолжительность MP3 файла"""
+        try:
+            # Простая оценка для MP3 на основе размера файла и битрейта
+            file_size = os.path.getsize(file_path)
+            
+            # Пытаемся найти MP3 заголовок для определения битрейта
+            with open(file_path, 'rb') as f:
+                # Ищем MP3 frame header
+                data = f.read(4096)  # Читаем первые 4KB
+                
+                for i in range(len(data) - 4):
+                    if data[i] == 0xFF and (data[i + 1] & 0xE0) == 0xE0:
+                        # Найден потенциальный MP3 header
+                        header = struct.unpack('>I', data[i:i+4])[0]
+                        bitrate = self.get_mp3_bitrate_from_header(header)
+                        if bitrate > 0:
+                            # Приблизительная продолжительность = размер_файла / (битрейт / 8)
+                            duration = (file_size * 8) / (bitrate * 1000)
+                            return duration
+                        break
+            
+            # Если не удалось определить битрейт, используем средний битрейт 128 kbps
+            duration = (file_size * 8) / (128 * 1000)
+            return duration
+            
+        except Exception as e:
+            logging.warning(f"Error reading MP3 file {file_path}: {str(e)}")
+            return None
+
+    def get_mp3_bitrate_from_header(self, header):
+        """Извлекает битрейт из MP3 заголовка"""
+        try:
+            # MP3 bitrate table (MPEG-1 Layer III)
+            bitrate_table = [
+                0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 0
+            ]
+            
+            bitrate_index = (header >> 12) & 0xF
+            if 0 < bitrate_index < 15:
+                return bitrate_table[bitrate_index]
+            return 0
+        except:
+            return 0
+
+    def estimate_duration_by_size(self, file_path):
+        """Приблизительная оценка продолжительности по размеру файла"""
+        try:
+            file_size = os.path.getsize(file_path)
+            # Используем средний битрейт 128 kbps для оценки
+            duration = (file_size * 8) / (128 * 1000)
+            return duration
+        except:
+            return None
+
+    def format_duration(self, seconds):
+        """Форматирует продолжительность в читаемый вид"""
+        if seconds is None:
+            return "unknown duration"
+        
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        secs = int(seconds % 60)
+        
+        if hours > 0:
+            return f"{hours}h {minutes}m {secs}s"
+        elif minutes > 0:
+            return f"{minutes}m {secs}s"
+        else:
+            return f"{secs}s"
         
     def setup_dark_theme(self):
         """Настройка темной темы для приложения"""
@@ -107,8 +207,6 @@ class AudioMerger:
         self.style.configure('Files.TLabel',
                            background=self.colors['bg'],
                            foreground=self.colors['text_secondary'],
-
-
                            font=('Segoe UI', 8))
         
         # Добавляем стиль для жирного текста файлов (без изменения фона)
@@ -136,9 +234,6 @@ class AudioMerger:
         self.style.map('Accent.TButton',
                       background=[('active', self.colors['accent_hover']),
                                 ('pressed', self.colors['accent'])])
-        
-
-
 
         # Голубая кнопка для merge
         self.style.configure('Blue.TButton',
@@ -148,16 +243,10 @@ class AudioMerger:
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
                            padding=(15, 10))
-        
-
-
 
         self.style.map('Blue.TButton',
                       background=[('active', '#38bdf8'),  # Светло-голубой при наведении
                                 ('pressed', '#0ea5e9')])
-        
-
-
 
         # Серая кнопка для change selection
         self.style.configure('Gray.TButton',
@@ -167,9 +256,6 @@ class AudioMerger:
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
                            padding=(20, 12))
-        
-
-
 
         self.style.map('Gray.TButton',
                       background=[('active', '#9ca3af'),  # Светло-серый при наведении
@@ -202,25 +288,14 @@ class AudioMerger:
         main_container = ttk.Frame(self.window, style='Dark.TFrame')
         main_container.grid(row=0, column=0, sticky='nsew', padx=20, pady=(8, 5))  # Уменьшили нижний отступ с 8 до 5
         main_container.grid_columnconfigure(0, weight=1)
-        
-
-
-
-        # Убираем заголовок:
-        # title_label = ttk.Label(main_container, text="🎵 Audio Merger", style='Title.TLabel')
-        # title_label.grid(row=0, column=0, pady=(0, 10))
-        
-
 
         # Кнопка выбора файлов (без иконки)
         self.select_btn = ttk.Button(main_container, text="Change Selection", 
                                    command=self.select_files, style='Gray.TButton')
-
         self.select_btn.grid(row=0, column=0, pady=(0, 6), sticky='ew')  # Изменили row с 1 на 0
         
         # Фрейм для информации о файлах
         self.files_info_frame = ttk.Frame(main_container, style='Dark.TFrame')
-
         self.files_info_frame.grid(row=1, column=0, pady=(0, 8), sticky='ew')  # Изменили row с 2 на 1
         self.files_info_frame.grid_columnconfigure(0, weight=1)
         
@@ -620,7 +695,12 @@ class AudioMerger:
             
             # Показать информацию о завершении в интерфейсе (нормализуем путь для правильных разделителей)
             normalized_path = os.path.normpath(output_path)
-            self.show_completion_message(f"Files merged successfully!\nSaved as: {normalized_path}")
+
+            # Получаем продолжительность выходного файла
+            output_duration = self.get_audio_duration(output_path)
+            duration_text = self.format_duration(output_duration)
+
+            self.show_completion_message(f"Files merged successfully! (Duration: {duration_text})\nSaved as: {normalized_path}")
             
         except Exception as e:
             logging.error("Error during merge process:")
