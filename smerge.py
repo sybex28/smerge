@@ -106,6 +106,12 @@ class AudioMerger:
 
                            font=('Segoe UI', 8))  # Уменьшили с 9 до 8
         
+        # Добавляем стиль для жирного текста файлов (без изменения фона)
+        self.style.configure('FilesBold.TLabel',
+                           background=self.colors['bg'],  # Тот же фон
+                           foreground=self.colors['text_secondary'],  # Тот же цвет текста
+                           font=('Segoe UI', 8, 'bold'))  # Только жирный шрифт
+        
         # Обновленные стили для кнопок
         # Основная акцентная кнопка (фиолетовая)
         self.style.configure('Accent.TButton',
@@ -169,7 +175,8 @@ class AudioMerger:
                            padding=8)
         
         self.style.map('Dark.TEntry',
-                      bordercolor=[('focus', self.colors['accent'])])
+                      bordercolor=[('focus', '#0ea5e9')],  # Голубая подсветка при фокусе
+                      fieldbackground=[('focus', '#374151')])  # Немного светлее фон при фокусе
         
         # Настройка стилей для Progressbar
         self.style.configure('Dark.Horizontal.TProgressbar',
@@ -198,10 +205,24 @@ class AudioMerger:
         
 
 
-        # Лейбл со списком выбранных файлов с настройкой переноса по словам
-        self.files_label = ttk.Label(main_container, text="", style='Files.TLabel', 
-                                   wraplength=350, justify='left')
-        self.files_label.grid(row=2, column=0, pady=(0, 8), sticky='ew')
+
+
+
+
+        # Фрейм для информации о файлах
+        self.files_info_frame = ttk.Frame(main_container, style='Dark.TFrame')
+        self.files_info_frame.grid(row=2, column=0, pady=(0, 8), sticky='ew')
+        self.files_info_frame.grid_columnconfigure(0, weight=1)
+        
+        # Лейбл с информацией о количестве файлов и пути (обычный шрифт)
+        self.files_info_label = ttk.Label(self.files_info_frame, text="", style='Files.TLabel', 
+                                        wraplength=350, justify='left')
+        self.files_info_label.grid(row=0, column=0, sticky='ew')
+        
+        # Лейбл со списком файлов (жирный шрифт)
+        self.files_list_label = ttk.Label(self.files_info_frame, text="", style='FilesBold.TLabel', 
+                                        wraplength=350, justify='left')
+        self.files_list_label.grid(row=1, column=0, sticky='ew')
         
         # Карточка настроек вывода
         self.output_card = ttk.Frame(main_container, style='Card.TFrame')
@@ -255,10 +276,13 @@ class AudioMerger:
 
     def on_window_resize(self, event):
         # Update label wraplength when window is resized
-        if hasattr(self, 'files_label') and event.widget == self.window:
+        if event.widget == self.window:
             # Адаптивная ширина с минимумом для правильного переноса слов
             new_width = max(300, event.width - 80)
-            self.files_label.configure(wraplength=new_width)
+            if hasattr(self, 'files_info_label'):
+                self.files_info_label.configure(wraplength=new_width)
+            if hasattr(self, 'files_list_label'):
+                self.files_list_label.configure(wraplength=new_width)
 
     def update_status(self, message, progress_value):
         self.status_label.config(text=message)
@@ -315,12 +339,24 @@ class AudioMerger:
             files_names = [f"[{os.path.basename(f)}]" for f in self.selected_files]
             folder_path = os.path.dirname(self.selected_files[0])
             
-            # Создаем текст в формате: Selected X files: [список] from путь
-            files_text = f"Selected {files_count} files: {', '.join(files_names)} from {folder_path}"
-            self.files_label.config(text=files_text)
+            # Разделяем на два лейбла: информация и список файлов
+            info_text = f"Selected {files_count} files from {folder_path}:"
+            files_text = ', '.join(files_names)
+            
+            self.files_info_label.config(text=info_text)
+            self.files_list_label.config(text=files_text)  # Этот будет жирным
+            
+            # Устанавливаем фокус на поле ввода и выделяем весь текст
+            self.window.after(100, self.focus_filename_entry)
             
             # Пересчитываем минимальный размер окна после добавления элементов
             self.window.after(50, self.update_min_size)
+
+    def focus_filename_entry(self):
+        """Устанавливает фокус на поле ввода имени файла и выделяет текст"""
+        if hasattr(self, 'filename_entry'):
+            self.filename_entry.focus_set()  # Устанавливаем фокус
+            self.filename_entry.select_range(0, tk.END)  # Выделяем весь текст
 
     def merge_files(self):
         if not self.selected_files:
