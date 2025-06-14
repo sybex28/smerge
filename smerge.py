@@ -196,19 +196,11 @@ class AudioMerger:
         title_label = ttk.Label(main_container, text="🎵 Audio Merger", style='Title.TLabel')
         title_label.grid(row=0, column=0, pady=(0, 10))
         
-
         # Кнопка выбора файлов (теперь серая)
         self.select_btn = ttk.Button(main_container, text="📁 Change Selection", 
-
                                    command=self.select_files, style='Gray.TButton')
         self.select_btn.grid(row=1, column=0, pady=(0, 6), sticky='ew')
         
-
-
-
-
-
-
         # Фрейм для информации о файлах
         self.files_info_frame = ttk.Frame(main_container, style='Dark.TFrame')
         self.files_info_frame.grid(row=2, column=0, pady=(0, 8), sticky='ew')
@@ -235,11 +227,11 @@ class AudioMerger:
         self.filename_entry = ttk.Entry(self.output_card, style='Dark.TEntry')
         self.filename_entry.grid(row=0, column=1, sticky='ew', padx=(10, 15), pady=(10, 10))
         
-        # Прогресс бар и статус
+        # Прогресс бар и статус (скрыт изначально)
         self.progress_frame = ttk.Frame(main_container, style='Dark.TFrame')
         self.progress_frame.grid(row=4, column=0, sticky='ew', pady=(0, 8))
         self.progress_frame.grid_columnconfigure(0, weight=1)
-        self.progress_frame.grid_remove()
+        self.progress_frame.grid_remove()  # Скрываем изначально
         
         self.progress = ttk.Progressbar(self.progress_frame, mode='determinate', style='Dark.Horizontal.TProgressbar')
         self.progress.grid(row=0, column=0, sticky='ew', pady=(0, 4))
@@ -247,10 +239,11 @@ class AudioMerger:
         self.status_label = ttk.Label(self.progress_frame, text="", style='Status.TLabel')
         self.status_label.grid(row=1, column=0)
         
-        # Кнопка объединения
+        # Кнопка объединения (скрыта до загрузки файлов)
         self.merge_frame = ttk.Frame(main_container, style='Dark.TFrame')
         self.merge_frame.grid(row=5, column=0, sticky='ew')
         self.merge_frame.grid_columnconfigure(0, weight=1)
+        self.merge_frame.grid_remove()  # Скрываем до загрузки файлов
         
         self.merge_btn = ttk.Button(self.merge_frame, text="🔗 Merge Audio Files", 
                                   command=self.merge_files, style='Blue.TButton')
@@ -308,16 +301,24 @@ class AudioMerger:
                 self.output_path = os.path.dirname(self.selected_files[0])
                 logging.debug(f"Output path set to: {self.output_path}")
                 
-                # Создаем строку с именами файлов через запятую
-                files_string = ", ".join([os.path.basename(f) for f in self.selected_files])
-                logging.info(f"Selected files: {files_string}")
-                
+
+
+
+
                 # Создаем интерфейс только после выбора файлов
                 if not self.interface_created:
                     self.create_widgets()
                     self.window.deiconify()  # Показываем окно
                 
-                self.update_ui_after_selection()
+
+                # Показываем информацию о файлах
+                self.show_files_info()
+                
+
+
+                # Запускаем процесс загрузки файлов
+                self.window.after(200, self.load_files)
+                
             else:
                 logging.info("No files selected")
                 # Если файлы не выбраны, закрываем приложение
@@ -331,26 +332,86 @@ class AudioMerger:
             else:
                 self.window.quit()
 
-    def update_ui_after_selection(self):
-        # Show/hide appropriate elements
-        if self.selected_files:
-            # Обновляем текст с выбранными файлами и путем к папке
-            files_count = len(self.selected_files)
-            files_names = [f"[{os.path.basename(f)}]" for f in self.selected_files]
-            folder_path = os.path.dirname(self.selected_files[0])
+
+
+
+
+
+
+
+    def show_files_info(self):
+        """Показывает информацию о выбранных файлах"""
+        files_count = len(self.selected_files)
+        files_names = [f"[{os.path.basename(f)}]" for f in self.selected_files]
+        folder_path = os.path.dirname(self.selected_files[0])
+        
+        # Разделяем на два лейбла: информация и список файлов
+        info_text = f"Selected {files_count} files from {folder_path}:"
+        files_text = ', '.join(files_names)
+        
+        self.files_info_label.config(text=info_text)
+        self.files_list_label.config(text=files_text)
+
+    def load_files(self):
+        """Имитация загрузки файлов с прогрессбаром"""
+        logging.info("Starting files loading process")
+        
+        # Отключить кнопку выбора во время загрузки
+        self.select_btn.config(state='disabled')
+        
+        # Показать прогрессбар
+        self.progress_frame.grid()
+        self.progress['value'] = 0
+        
+        try:
+            file_count = len(self.selected_files)
+            progress_per_file = 100 / file_count
             
-            # Разделяем на два лейбла: информация и список файлов
-            info_text = f"Selected {files_count} files from {folder_path}:"
-            files_text = ', '.join(files_names)
+
+
+
+            for i, file in enumerate(self.selected_files, 1):
+                current_file = os.path.basename(file)
+                logging.info(f"Loading file {i}/{file_count}: {current_file}")
+                
+                # Обновляем прогресс
+                progress_value = i * progress_per_file
+                self.update_status(f"📂 Loading {i}/{file_count}: {current_file}", progress_value)
+                
+                # Имитация времени загрузки (можно убрать или уменьшить)
+                import time
+                time.sleep(0.1)  # Небольшая задержка для демонстрации
             
-            self.files_info_label.config(text=info_text)
-            self.files_list_label.config(text=files_text)  # Этот будет жирным
+
+
+            logging.info("Files loaded successfully")
+            self.update_status("✅ Files loaded successfully!", 100)
             
-            # Устанавливаем фокус на поле ввода и выделяем весь текст
-            self.window.after(100, self.focus_filename_entry)
+
+
+            # Небольшая пауза перед показом интерфейса объединения
+            self.window.after(500, self.show_merge_interface)
             
-            # Пересчитываем минимальный размер окна после добавления элементов
-            self.window.after(50, self.update_min_size)
+
+
+        except Exception as e:
+            logging.error("Error during files loading:")
+            logging.error(traceback.format_exc())
+            self.update_status(f"❌ Error loading files: {str(e)}", 0)
+        finally:
+            # Включить кнопку выбора обратно
+            self.select_btn.config(state='normal')
+
+    def show_merge_interface(self):
+        """Показывает интерфейс для объединения после загрузки файлов"""
+        # Скрыть прогрессбар загрузки
+        self.progress_frame.grid_remove()
+        
+        # Показать кнопку объединения
+        self.merge_frame.grid()
+        
+        # Устанавливаем фокус на поле ввода и выделяем весь текст
+        self.focus_filename_entry()
 
     def focus_filename_entry(self):
         """Устанавливает фокус на поле ввода имени файла и выделяет текст"""
