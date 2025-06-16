@@ -9,7 +9,7 @@ import wave
 import struct
 
 # Настройка логирования
-log_filename = f"smerge_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log"
+log_filename = "smerge.log"
 logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(levelname)s - %(message)s',
@@ -25,7 +25,7 @@ class AudioMerger:
         self.window = tk.Tk()
         self.window.title("smerge")
 
-        self.window.minsize(500, 200)  # Увеличили минимальную высоту со 120 до 200
+        self.window.minsize(500, 210)  # Увеличили минимальную высоту со 120 до 210
         self.window.resizable(True, True)  # Изменили с (True, False) на (True, True) - теперь можно изменять и по высоте
         
         # Скрываем окно при запуске
@@ -33,10 +33,10 @@ class AudioMerger:
         
         # Обновленная цветовая схема с новыми цветами кнопок
         self.colors = {
-            'bg': '#1e1e1e',           # Основной фон
-            'secondary_bg': '#2d2d2d',  # Вторичный фон
-            'accent': '#6366f1',        # Новый фиолетовый акцент
-            'accent_hover': '#8b5cf6',  # Светло-фиолетовый при наведении
+            'bg': '#141E1B',           # Основной фон (темно-зеленый)
+            'secondary_bg': '#1D2B27',  # Вторичный фон (чуть светлее основного)
+            'accent': '#9D7CFF',        # Новый фиолетовый акцент
+            'accent_hover': '#B49DFF',  # Светло-фиолетовый при наведении
             'secondary_accent': '#10b981', # Зеленый для второстепенных кнопок
             'secondary_hover': '#34d399',  # Светло-зеленый при наведении
             'text': '#ffffff',          # Основной текст
@@ -179,7 +179,7 @@ class AudioMerger:
                            borderwidth=0)
         
         self.style.configure('Card.TFrame',
-                           background=self.colors['secondary_bg'],
+                           background='#141E1B',  # Используем основной фон
                            relief='flat',
                            borderwidth=1)
         
@@ -190,7 +190,7 @@ class AudioMerger:
                            font=('Segoe UI', 10))
         
         self.style.configure('Card.TLabel',
-                           background=self.colors['secondary_bg'],
+                           background='#141E1B',  # Используем основной фон
                            foreground=self.colors['text'],
                            font=('Segoe UI', 10))
         
@@ -215,10 +215,10 @@ class AudioMerger:
                            foreground=self.colors['text_secondary'],  # Тот же цвет текста
                            font=('Segoe UI', 8, 'bold'))  # Только жирный шрифт
         
-        # Добавляем стиль для успешного сообщения (голубой цвет как у кнопки merge + жирный шрифт)
+        # Добавляем стиль для успешного сообщения (зеленый цвет + жирный шрифт)
         self.style.configure('Success.TLabel',
                            background=self.colors['bg'],
-                           foreground='#0ea5e9',  # Голубой цвет как у кнопки merge
+                           foreground='#29FFA9',  # Зеленый цветт как у кнопки merge
                            font=('Segoe UI', 10, 'bold'))  # Добавили 'bold'
         
         # Обновленные стили для кнопок
@@ -235,9 +235,9 @@ class AudioMerger:
                       background=[('active', self.colors['accent_hover']),
                                 ('pressed', self.colors['accent'])])
 
-        # Голубая кнопка для merge
+        # Фиолетовая кнопка для merge
         self.style.configure('Blue.TButton',
-                           background='#0ea5e9',  # Голубой
+                           background='#9D7CFF',  # Фиолетовый
                            foreground='white',
                            borderwidth=0,
                            focuscolor='none',
@@ -245,12 +245,12 @@ class AudioMerger:
                            padding=(15, 10))
 
         self.style.map('Blue.TButton',
-                      background=[('active', '#38bdf8'),  # Светло-голубой при наведении
-                                ('pressed', '#0ea5e9')])
+                      background=[('active', '#B49DFF'),  # Светло-фиолетовый при наведении
+                                ('pressed', '#9D7CFF')])
 
-        # Серая кнопка для change selection
+        # Серая кнопка для change selection (темнее)
         self.style.configure('Gray.TButton',
-                           background='#6b7280',  # Серый
+                           background='#4b5563',  # Темно-серый
                            foreground='white',
                            borderwidth=0,
                            focuscolor='none',
@@ -258,13 +258,13 @@ class AudioMerger:
                            padding=(20, 12))
 
         self.style.map('Gray.TButton',
-                      background=[('active', '#9ca3af'),  # Светло-серый при наведении
-                                ('pressed', '#6b7280')])
+                      background=[('active', '#6b7280'),  # Серый при наведении
+                                ('pressed', '#4b5563')])
         
         # Настройка стилей для Entry
         self.style.configure('Dark.TEntry',
-                           fieldbackground=self.colors['secondary_bg'],
-                           background=self.colors['secondary_bg'],
+                           fieldbackground='#141E1B',  # Основной фон
+                           background='#141E1B',  # Основной фон
                            foreground=self.colors['text'],
                            bordercolor=self.colors['border'],
                            insertcolor=self.colors['text'],
@@ -272,21 +272,21 @@ class AudioMerger:
                            padding=8)
         
         self.style.map('Dark.TEntry',
-                      bordercolor=[('focus', '#0ea5e9')],  # Голубая подсветка при фокусе
+                      bordercolor=[('focus', '#9D7CFF')],  # Фиолетовая подсветка при фокусе
                       fieldbackground=[('focus', '#374151')])  # Немного светлее фон при фокусе
         
         # Настройка стилей для Progressbar
         self.style.configure('Dark.Horizontal.TProgressbar',
-                           background='#0ea5e9',  # Голубой цвет как у кнопки merge
+                           background='#9D7CFF',  # Фиолетовый цвет как у кнопки merge
                            troughcolor=self.colors['secondary_bg'],
                            borderwidth=0,
-                           lightcolor='#0ea5e9',  # Голубой цвет
-                           darkcolor='#0ea5e9')   # Голубой цвет)
+                           lightcolor='#9D7CFF',  # Фиолетовый цвет
+                           darkcolor='#9D7CFF')   # Фиолетовый цвет)
         
     def create_widgets(self):
         # Основной контейнер с отступами
         main_container = ttk.Frame(self.window, style='Dark.TFrame')
-        main_container.grid(row=0, column=0, sticky='nsew', padx=20, pady=(8, 5))  # Уменьшили нижний отступ с 8 до 5
+        main_container.grid(row=0, column=0, sticky='nsew', padx=20, pady=(8, 10))  # Увеличили нижний отступ с 5 до 10
         main_container.grid_columnconfigure(0, weight=1)
 
         # Кнопка выбора файлов (без иконки)
