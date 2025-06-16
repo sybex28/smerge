@@ -6,7 +6,7 @@ The intuitive interface allows you to merge audio tracks in just a couple of cli
 
 **How to use:**
 
-1. Click the file selection button and choose the audio files you want to merge.
+1. Choose the audio files you want to merge.
 
 2. After selecting files, the cursor automatically moves to the output filename field.
 
