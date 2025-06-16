@@ -295,3 +295,65 @@
 2025-06-16 16:24:23,549 - INFO - Processing file 9/10: 9.mp3
 2025-06-16 16:24:23,555 - INFO - Processing file 10/10: 10.mp3
 2025-06-16 16:24:23,565 - INFO - Merge completed successfully
+2025-06-16 16:25:47,279 - INFO - Starting application
+2025-06-16 16:25:47,279 - INFO - Initializing smerge application
+2025-06-16 16:25:47,484 - INFO - Opening file selection dialog
+2025-06-16 16:25:50,592 - INFO - No files selected
+2025-06-16 16:28:19,609 - INFO - Starting application
+2025-06-16 16:28:19,609 - INFO - Initializing smerge application
+2025-06-16 16:28:19,800 - INFO - Opening file selection dialog
+2025-06-16 16:28:24,155 - INFO - Selected 23 files
+2025-06-16 16:28:24,155 - DEBUG - Output path set to: D:/Cloud/YandexDisk/Projects/Страшилки/English/198
+2025-06-16 16:28:24,391 - INFO - Starting files loading process
+2025-06-16 16:28:24,392 - INFO - Checking for duplicate files
+2025-06-16 16:28:24,451 - INFO - Loading file 1/23: 1.mp3
+2025-06-16 16:28:24,506 - INFO - Loading file 2/23: 2.mp3
+2025-06-16 16:28:24,557 - INFO - Loading file 3/23: 3.mp3
+2025-06-16 16:28:24,610 - INFO - Loading file 4/23: 4.mp3
+2025-06-16 16:28:24,664 - INFO - Loading file 5/23: 5.mp3
+2025-06-16 16:28:24,716 - INFO - Loading file 6/23: 6.mp3
+2025-06-16 16:28:24,768 - INFO - Loading file 7/23: 7.mp3
+2025-06-16 16:28:24,820 - INFO - Loading file 8/23: 8.mp3
+2025-06-16 16:28:24,872 - INFO - Loading file 9/23: 9.mp3
+2025-06-16 16:28:24,924 - INFO - Loading file 10/23: 10.mp3
+2025-06-16 16:28:24,977 - INFO - Loading file 11/23: 11.mp3
+2025-06-16 16:28:25,030 - INFO - Loading file 12/23: 12.mp3
+2025-06-16 16:28:25,083 - INFO - Loading file 13/23: 13.mp3
+2025-06-16 16:28:25,135 - INFO - Loading file 14/23: 14.mp3
+2025-06-16 16:28:25,186 - INFO - Loading file 15/23: 16.mp3
+2025-06-16 16:28:25,240 - INFO - Loading file 16/23: 17.mp3
+2025-06-16 16:28:25,292 - INFO - Loading file 17/23: 18.mp3
+2025-06-16 16:28:25,344 - INFO - Loading file 18/23: 19.mp3
+2025-06-16 16:28:25,396 - INFO - Loading file 19/23: 20.mp3
+2025-06-16 16:28:25,448 - INFO - Loading file 20/23: 21.mp3
+2025-06-16 16:28:25,501 - INFO - Loading file 21/23: 22.mp3
+2025-06-16 16:28:25,553 - INFO - Loading file 22/23: 23.mp3
+2025-06-16 16:28:25,605 - INFO - Loading file 23/23: 24.mp3
+2025-06-16 16:28:25,657 - INFO - Files loaded successfully
+2025-06-16 16:28:31,951 - INFO - Starting file merge process
+2025-06-16 16:28:31,954 - INFO - Output filename: 333
+2025-06-16 16:28:31,954 - DEBUG - Full output path: D:/Cloud/YandexDisk/Projects/Страшилки/English/198\333.mp3
+2025-06-16 16:28:31,993 - INFO - Processing file 1/23: 1.mp3
+2025-06-16 16:28:32,000 - INFO - Processing file 2/23: 2.mp3
+2025-06-16 16:28:32,005 - INFO - Processing file 3/23: 3.mp3
+2025-06-16 16:28:32,008 - INFO - Processing file 4/23: 4.mp3
+2025-06-16 16:28:32,012 - INFO - Processing file 5/23: 5.mp3
+2025-06-16 16:28:32,015 - INFO - Processing file 6/23: 6.mp3
+2025-06-16 16:28:32,020 - INFO - Processing file 7/23: 7.mp3
+2025-06-16 16:28:32,024 - INFO - Processing file 8/23: 8.mp3
+2025-06-16 16:28:32,027 - INFO - Processing file 9/23: 9.mp3
+2025-06-16 16:28:32,030 - INFO - Processing file 10/23: 10.mp3
+2025-06-16 16:28:32,034 - INFO - Processing file 11/23: 11.mp3
+2025-06-16 16:28:32,038 - INFO - Processing file 12/23: 12.mp3
+2025-06-16 16:28:32,045 - INFO - Processing file 13/23: 13.mp3
+2025-06-16 16:28:32,048 - INFO - Processing file 14/23: 14.mp3
+2025-06-16 16:28:32,051 - INFO - Processing file 15/23: 16.mp3
+2025-06-16 16:28:32,054 - INFO - Processing file 16/23: 17.mp3
+2025-06-16 16:28:32,057 - INFO - Processing file 17/23: 18.mp3
+2025-06-16 16:28:32,064 - INFO - Processing file 18/23: 19.mp3
+2025-06-16 16:28:32,069 - INFO - Processing file 19/23: 20.mp3
+2025-06-16 16:28:32,073 - INFO - Processing file 20/23: 21.mp3
+2025-06-16 16:28:32,077 - INFO - Processing file 21/23: 22.mp3
+2025-06-16 16:28:32,081 - INFO - Processing file 22/23: 23.mp3
+2025-06-16 16:28:32,085 - INFO - Processing file 23/23: 24.mp3
+2025-06-16 16:28:32,091 - INFO - Merge completed successfully
