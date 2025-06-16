@@ -321,6 +321,9 @@ class AudioMerger:
         self.filename_entry = ttk.Entry(self.output_card, style='Dark.TEntry')
         self.filename_entry.grid(row=0, column=1, sticky='ew', padx=(10, 15), pady=(10, 10))
         
+        # Привязываем нажатие Enter к функции объединения файлов
+        self.filename_entry.bind('<Return>', lambda event: self.merge_files())
+        
         # Прогресс бар и статус (скрыт изначально)
         self.progress_frame = ttk.Frame(main_container, style='Dark.TFrame')
 

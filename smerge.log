@@ -197,3 +197,101 @@
 2025-06-16 16:12:05,664 - INFO - Processing file 9/10: 9.mp3
 2025-06-16 16:12:05,673 - INFO - Processing file 10/10: 10.mp3
 2025-06-16 16:12:05,684 - INFO - Merge completed successfully
+2025-06-16 16:16:45,997 - INFO - Starting application
+2025-06-16 16:16:45,997 - INFO - Initializing smerge application
+2025-06-16 16:16:46,174 - INFO - Opening file selection dialog
+2025-06-16 16:16:55,717 - INFO - Selected 24 files
+2025-06-16 16:16:55,717 - DEBUG - Output path set to: D:/Cloud/YandexDisk/Projects/Страшилки/English/198
+2025-06-16 16:16:55,947 - INFO - Starting files loading process
+2025-06-16 16:16:55,948 - INFO - Checking for duplicate files
+2025-06-16 16:17:07,594 - INFO - User chose to cancel due to duplicates
+2025-06-16 16:18:11,478 - INFO - Starting application
+2025-06-16 16:18:11,478 - INFO - Initializing smerge application
+2025-06-16 16:18:11,654 - INFO - Opening file selection dialog
+2025-06-16 16:18:15,342 - INFO - Selected 23 files
+2025-06-16 16:18:15,342 - DEBUG - Output path set to: D:/Cloud/YandexDisk/Projects/Страшилки/English/198
+2025-06-16 16:18:15,572 - INFO - Starting files loading process
+2025-06-16 16:18:15,572 - INFO - Checking for duplicate files
+2025-06-16 16:18:15,644 - INFO - Loading file 1/23: 1.mp3
+2025-06-16 16:18:15,699 - INFO - Loading file 2/23: 2.mp3
+2025-06-16 16:18:15,751 - INFO - Loading file 3/23: 3.mp3
+2025-06-16 16:18:15,803 - INFO - Loading file 4/23: 4.mp3
+2025-06-16 16:18:15,855 - INFO - Loading file 5/23: 5.mp3
+2025-06-16 16:18:15,906 - INFO - Loading file 6/23: 6.mp3
+2025-06-16 16:18:15,959 - INFO - Loading file 7/23: 7.mp3
+2025-06-16 16:18:16,011 - INFO - Loading file 8/23: 8.mp3
+2025-06-16 16:18:16,063 - INFO - Loading file 9/23: 9.mp3
+2025-06-16 16:18:16,116 - INFO - Loading file 10/23: 10.mp3
+2025-06-16 16:18:16,170 - INFO - Loading file 11/23: 11.mp3
+2025-06-16 16:18:16,222 - INFO - Loading file 12/23: 12.mp3
+2025-06-16 16:18:16,275 - INFO - Loading file 13/23: 13.mp3
+2025-06-16 16:18:16,327 - INFO - Loading file 14/23: 14.mp3
+2025-06-16 16:18:16,380 - INFO - Loading file 15/23: 16.mp3
+2025-06-16 16:18:16,433 - INFO - Loading file 16/23: 17.mp3
+2025-06-16 16:18:16,485 - INFO - Loading file 17/23: 18.mp3
+2025-06-16 16:18:16,538 - INFO - Loading file 18/23: 19.mp3
+2025-06-16 16:18:16,592 - INFO - Loading file 19/23: 20.mp3
+2025-06-16 16:18:16,645 - INFO - Loading file 20/23: 21.mp3
+2025-06-16 16:18:16,698 - INFO - Loading file 21/23: 22.mp3
+2025-06-16 16:18:16,750 - INFO - Loading file 22/23: 23.mp3
+2025-06-16 16:18:16,802 - INFO - Loading file 23/23: 24.mp3
+2025-06-16 16:18:16,855 - INFO - Files loaded successfully
+2025-06-16 16:18:27,296 - INFO - Starting file merge process
+2025-06-16 16:18:27,298 - INFO - Output filename: 198-EN
+2025-06-16 16:18:27,298 - DEBUG - Full output path: D:/Cloud/YandexDisk/Projects/Страшилки/English/198\198-EN.mp3
+2025-06-16 16:18:27,338 - INFO - Processing file 1/23: 1.mp3
+2025-06-16 16:18:27,345 - INFO - Processing file 2/23: 2.mp3
+2025-06-16 16:18:27,350 - INFO - Processing file 3/23: 3.mp3
+2025-06-16 16:18:27,355 - INFO - Processing file 4/23: 4.mp3
+2025-06-16 16:18:27,360 - INFO - Processing file 5/23: 5.mp3
+2025-06-16 16:18:27,362 - INFO - Processing file 6/23: 6.mp3
+2025-06-16 16:18:27,367 - INFO - Processing file 7/23: 7.mp3
+2025-06-16 16:18:27,370 - INFO - Processing file 8/23: 8.mp3
+2025-06-16 16:18:27,378 - INFO - Processing file 9/23: 9.mp3
+2025-06-16 16:18:27,381 - INFO - Processing file 10/23: 10.mp3
+2025-06-16 16:18:27,385 - INFO - Processing file 11/23: 11.mp3
+2025-06-16 16:18:27,390 - INFO - Processing file 12/23: 12.mp3
+2025-06-16 16:18:27,399 - INFO - Processing file 13/23: 13.mp3
+2025-06-16 16:18:27,403 - INFO - Processing file 14/23: 14.mp3
+2025-06-16 16:18:27,405 - INFO - Processing file 15/23: 16.mp3
+2025-06-16 16:18:27,409 - INFO - Processing file 16/23: 17.mp3
+2025-06-16 16:18:27,413 - INFO - Processing file 17/23: 18.mp3
+2025-06-16 16:18:27,418 - INFO - Processing file 18/23: 19.mp3
+2025-06-16 16:18:27,422 - INFO - Processing file 19/23: 20.mp3
+2025-06-16 16:18:27,429 - INFO - Processing file 20/23: 21.mp3
+2025-06-16 16:18:27,433 - INFO - Processing file 21/23: 22.mp3
+2025-06-16 16:18:27,437 - INFO - Processing file 22/23: 23.mp3
+2025-06-16 16:18:27,444 - INFO - Processing file 23/23: 24.mp3
+2025-06-16 16:18:27,451 - INFO - Merge completed successfully
+2025-06-16 16:24:15,828 - INFO - Starting application
+2025-06-16 16:24:15,828 - INFO - Initializing smerge application
+2025-06-16 16:24:16,017 - INFO - Opening file selection dialog
+2025-06-16 16:24:20,655 - INFO - Selected 10 files
+2025-06-16 16:24:20,656 - DEBUG - Output path set to: D:/Cloud/YandexDisk/Projects/Страшилки/Brazil/Макар/98
+2025-06-16 16:24:20,893 - INFO - Starting files loading process
+2025-06-16 16:24:20,893 - INFO - Checking for duplicate files
+2025-06-16 16:24:20,941 - INFO - Loading file 1/10: 1.mp3
+2025-06-16 16:24:20,997 - INFO - Loading file 2/10: 2.mp3
+2025-06-16 16:24:21,049 - INFO - Loading file 3/10: 3.mp3
+2025-06-16 16:24:21,102 - INFO - Loading file 4/10: 4.mp3
+2025-06-16 16:24:21,155 - INFO - Loading file 5/10: 5.mp3
+2025-06-16 16:24:21,208 - INFO - Loading file 6/10: 6.mp3
+2025-06-16 16:24:21,260 - INFO - Loading file 7/10: 7.mp3
+2025-06-16 16:24:21,314 - INFO - Loading file 8/10: 8.mp3
+2025-06-16 16:24:21,367 - INFO - Loading file 9/10: 9.mp3
+2025-06-16 16:24:21,419 - INFO - Loading file 10/10: 10.mp3
+2025-06-16 16:24:21,476 - INFO - Files loaded successfully
+2025-06-16 16:24:23,439 - INFO - Starting file merge process
+2025-06-16 16:24:23,441 - INFO - Output filename: 333
+2025-06-16 16:24:23,441 - DEBUG - Full output path: D:/Cloud/YandexDisk/Projects/Страшилки/Brazil/Макар/98\333.mp3
+2025-06-16 16:24:23,486 - INFO - Processing file 1/10: 1.mp3
+2025-06-16 16:24:23,493 - INFO - Processing file 2/10: 2.mp3
+2025-06-16 16:24:23,505 - INFO - Processing file 3/10: 3.mp3
+2025-06-16 16:24:23,512 - INFO - Processing file 4/10: 4.mp3
+2025-06-16 16:24:23,520 - INFO - Processing file 5/10: 5.mp3
+2025-06-16 16:24:23,527 - INFO - Processing file 6/10: 6.mp3
+2025-06-16 16:24:23,535 - INFO - Processing file 7/10: 7.mp3
+2025-06-16 16:24:23,542 - INFO - Processing file 8/10: 8.mp3
+2025-06-16 16:24:23,549 - INFO - Processing file 9/10: 9.mp3
+2025-06-16 16:24:23,555 - INFO - Processing file 10/10: 10.mp3
+2025-06-16 16:24:23,565 - INFO - Merge completed successfully
