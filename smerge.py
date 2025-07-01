@@ -25,7 +25,7 @@ class AudioMerger:
         self.window = tk.Tk()
         self.window.title("smerge")
 
-        self.window.minsize(500, 210)  # Увеличили минимальную высоту со 120 до 210
+        self.window.minsize(500, 200)  # Минимальный размер 500x200
         self.window.resizable(True, True)  # Изменили с (True, False) на (True, True) - теперь можно изменять и по высоте
         
         # Скрываем окно при запуске
@@ -218,7 +218,7 @@ class AudioMerger:
         # Добавляем стиль для успешного сообщения (зеленый цвет + жирный шрифт)
         self.style.configure('Success.TLabel',
                            background=self.colors['bg'],
-                           foreground='#29FFA9',  # Зеленый цветт как у кнопки merge
+                           foreground='#00e39a',  # Зеленый цвет как у кнопки merge
                            font=('Segoe UI', 10, 'bold'))  # Добавили 'bold'
         
         # Обновленные стили для кнопок
@@ -229,37 +229,40 @@ class AudioMerger:
                            borderwidth=0,
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
-                           padding=(20, 12))
+                           padding=(20, 12),
+                           justify='center')
         
         self.style.map('Accent.TButton',
                       background=[('active', self.colors['accent_hover']),
                                 ('pressed', self.colors['accent'])])
 
-        # Фиолетовая кнопка для merge
+        # Зеленая кнопка для merge
         self.style.configure('Blue.TButton',
-                           background='#9D7CFF',  # Фиолетовый
-                           foreground='white',
+                           background='#00e39a',  # Зеленый
+                           foreground='#021b18',  # Темно-зеленый текст
                            borderwidth=0,
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
-                           padding=(15, 10))
+                           padding=(15, 10),
+                           justify='center')
 
         self.style.map('Blue.TButton',
-                      background=[('active', '#B49DFF'),  # Светло-фиолетовый при наведении
-                                ('pressed', '#9D7CFF')])
+                      background=[('active', '#34f5b5'),  # Светло-зеленый при наведении
+                                ('pressed', '#00e39a')])
 
-        # Серая кнопка для change selection (темнее)
+        # Фиолетовая кнопка для change selection
         self.style.configure('Gray.TButton',
-                           background='#4b5563',  # Темно-серый
-                           foreground='white',
+                           background='#8556f6',  # Фиолетовый
+                           foreground='white',    # Белый текст
                            borderwidth=0,
                            focuscolor='none',
                            font=('Segoe UI', 10, 'bold'),
-                           padding=(20, 12))
+                           padding=(20, 12),
+                           justify='center')
 
         self.style.map('Gray.TButton',
-                      background=[('active', '#6b7280'),  # Серый при наведении
-                                ('pressed', '#4b5563')])
+                      background=[('active', '#9d7cff'),  # Светло-фиолетовый при наведении
+                                ('pressed', '#8556f6')])
         
         # Настройка стилей для Entry
         self.style.configure('Dark.TEntry',
@@ -268,8 +271,8 @@ class AudioMerger:
                            foreground=self.colors['text'],
                            bordercolor=self.colors['border'],
                            insertcolor=self.colors['text'],
-                           font=('Segoe UI', 10),
-                           padding=8)
+                           font=('Segoe UI', 10, 'bold'),
+                           padding=(10, 8))
         
         self.style.map('Dark.TEntry',
                       bordercolor=[('focus', '#9D7CFF')],  # Фиолетовая подсветка при фокусе
@@ -277,77 +280,63 @@ class AudioMerger:
         
         # Настройка стилей для Progressbar
         self.style.configure('Dark.Horizontal.TProgressbar',
-                           background='#9D7CFF',  # Фиолетовый цвет как у кнопки merge
+                           background='#00e39a',  # Зеленый цвет как у кнопки merge
                            troughcolor=self.colors['secondary_bg'],
                            borderwidth=0,
-                           lightcolor='#9D7CFF',  # Фиолетовый цвет
-                           darkcolor='#9D7CFF')   # Фиолетовый цвет)
+                           lightcolor='#00e39a',  # Зеленый цвет
+                           darkcolor='#00e39a')   # Зеленый цвет)
         
     def create_widgets(self):
         # Основной контейнер с отступами
         main_container = ttk.Frame(self.window, style='Dark.TFrame')
-        main_container.grid(row=0, column=0, sticky='nsew', padx=20, pady=(8, 10))  # Увеличили нижний отступ с 5 до 10
+        main_container.grid(row=0, column=0, sticky='nsew', padx=10, pady=15)  # Одинаковые отступы сверху и снизу
         main_container.grid_columnconfigure(0, weight=1)
+        self.main_container = main_container  # Сохраняем ссылку для доступа в других методах
 
         # Кнопка выбора файлов (без иконки)
         self.select_btn = ttk.Button(main_container, text="Change Selection", 
                                    command=self.select_files, style='Gray.TButton')
-        self.select_btn.grid(row=0, column=0, pady=(0, 6), sticky='ew')  # Изменили row с 1 на 0
+        self.select_btn.grid(row=0, column=0, pady=(0, 6), padx=5, sticky='ew')  # Растягиваем на всю ширину
         
-        # Фрейм для информации о файлах
-        self.files_info_frame = ttk.Frame(main_container, style='Dark.TFrame')
-        self.files_info_frame.grid(row=1, column=0, pady=(0, 8), sticky='ew')  # Изменили row с 2 на 1
-        self.files_info_frame.grid_columnconfigure(0, weight=1)
+        # Лейбл для информации о файлах
+        self.files_info_label = ttk.Label(main_container, text="", style='Files.TLabel', 
+                                        wraplength=380, justify='left')
+        self.files_info_label.grid(row=1, column=0, pady=(0, 8), sticky='ew', padx=5)
         
-        # Лейбл с информацией о количестве файлов и пути (обычный шрифт)
-        self.files_info_label = ttk.Label(self.files_info_frame, text="", style='Files.TLabel', 
-                                        wraplength=350, justify='left')
-        self.files_info_label.grid(row=0, column=0, sticky='ew')
+        # Фрейм для поля ввода, прогрессбара и результата с фиксированной высотой
+        self.input_frame = ttk.Frame(main_container, style='Dark.TFrame', height=40)
+        self.input_frame.grid(row=2, column=0, sticky='ew', padx=5, pady=(0, 8))
+        self.input_frame.grid_columnconfigure(0, weight=1)
+        self.input_frame.grid_propagate(False)  # Запрещаем изменение размера
         
-        # Лейбл со списком файлов (жирный шрифт)
-        self.files_list_label = ttk.Label(self.files_info_frame, text="", style='FilesBold.TLabel', 
-                                        wraplength=350, justify='left')
-        self.files_list_label.grid(row=1, column=0, sticky='ew')
-        
-        # Карточка настроек вывода
-        self.output_card = ttk.Frame(main_container, style='Card.TFrame')
-
-        self.output_card.grid(row=2, column=0, sticky='ew', pady=(0, 8))  # Изменили row с 3 на 2
-        self.output_card.grid_columnconfigure(1, weight=1)
-        
-        filename_label = ttk.Label(self.output_card, text="Filename:", style='Card.TLabel')
-        filename_label.grid(row=0, column=0, padx=15, pady=(10, 10), sticky='w')
-        
-        self.filename_entry = ttk.Entry(self.output_card, style='Dark.TEntry')
-        self.filename_entry.grid(row=0, column=1, sticky='ew', padx=(10, 15), pady=(10, 10))
+        # Поле ввода имени файла
+        self.filename_entry = ttk.Entry(self.input_frame, style='Dark.TEntry')
+        self.filename_entry.grid(row=0, column=0, sticky='ew', pady=5)
         
         # Привязываем нажатие Enter к функции объединения файлов
         self.filename_entry.bind('<Return>', lambda event: self.merge_files())
         
-        # Прогресс бар и статус (скрыт изначально)
-        self.progress_frame = ttk.Frame(main_container, style='Dark.TFrame')
+        # Прогресс бар (скрыт изначально, занимает то же место что и поле ввода)
+        self.progress = ttk.Progressbar(self.input_frame, mode='determinate', style='Dark.Horizontal.TProgressbar')
+        self.progress.grid(row=0, column=0, sticky='ew', pady=5)
+        self.progress.grid_remove()  # Скрываем изначально
+        
+        # Лейбл для результата (скрыт изначально, занимает то же место)
+        self.result_label = ttk.Label(self.input_frame, text="", style='Success.TLabel', 
+                                    wraplength=400, justify='center')
+        self.result_label.grid(row=0, column=0, sticky='ew', pady=5)
+        self.result_label.grid_remove()  # Скрываем изначально
+        
 
-        self.progress_frame.grid(row=3, column=0, sticky='ew', pady=(0, 8))  # Изменили row с 4 на 3
-        self.progress_frame.grid_columnconfigure(0, weight=1)
-        self.progress_frame.grid_remove()  # Скрываем изначально
         
-        self.progress = ttk.Progressbar(self.progress_frame, mode='determinate', style='Dark.Horizontal.TProgressbar')
-        self.progress.grid(row=0, column=0, sticky='ew', pady=(0, 4))
-        
-        self.status_label = ttk.Label(self.progress_frame, text="", style='Status.TLabel')
-        self.status_label.grid(row=1, column=0)
-        
-        # Кнопка объединения (скрыта до загрузки файлов)
+        # Кнопка объединения (всегда видна, но может быть отключена)
         self.merge_frame = ttk.Frame(main_container, style='Dark.TFrame')
-
-        self.merge_frame.grid(row=4, column=0, sticky='ew')  # Изменили row с 5 на 4
+        self.merge_frame.grid(row=4, column=0, sticky='ew', pady=(0, 0))  # Убираем отступ, так как увеличили высоту окна
         self.merge_frame.grid_columnconfigure(0, weight=1)
-        self.merge_frame.grid_remove()  # Скрываем до загрузки файлов
         
-
         self.merge_btn = ttk.Button(self.merge_frame, text="Merge Audio Files", 
-                                  command=self.merge_files, style='Blue.TButton')
-        self.merge_btn.grid(row=0, column=0, sticky='ew')
+                                  command=self.merge_files, style='Blue.TButton', state='disabled')
+        self.merge_btn.grid(row=0, column=0, sticky='ew', padx=5)
         
         # Bind window resize event
         self.window.bind('<Configure>', self.on_window_resize)
@@ -355,43 +344,18 @@ class AudioMerger:
         self.interface_created = True
 
     def update_min_size(self):
-        """Обновляет минимальный размер окна на основе содержимого"""
-        self.window.update_idletasks()
-        # Получаем требуемый размер для всех элементов
-        req_width = self.window.winfo_reqwidth()
-        req_height = self.window.winfo_reqheight()
-        
-        # Получаем текущий минимальный размер
-        current_min_width = self.window.minsize()[0]
-        
-        # Ширину оставляем как есть, только высоту обновляем
-
-
-        min_width = current_min_width
-        min_height = max(200, req_height + 20)  # Уменьшили запас с 40 до 20
-        
-        self.window.minsize(min_width, min_height)
-        
-        # Если текущий размер окна меньше требуемого по высоте, увеличиваем его
-        current_width = self.window.winfo_width()
-        current_height = self.window.winfo_height()
-        
-        if current_height < min_height:
-
-            self.window.geometry(f"{current_width}x{min_height}")
+        """Устанавливает оптимальный размер окна"""
+        # Устанавливаем размер 500x200
+        self.window.geometry("500x200")
 
     def on_window_resize(self, event):
-        # Update label wraplength when window is resized
+        # Обновляем wraplength при ручном изменении размера окна
         if event.widget == self.window:
-            # Адаптивная ширина с минимумом для правильного переноса слов
-            new_width = max(300, event.width - 80)
+            new_width = max(300, event.width - 50)
             if hasattr(self, 'files_info_label'):
                 self.files_info_label.configure(wraplength=new_width)
-            if hasattr(self, 'files_list_label'):
-                self.files_list_label.configure(wraplength=new_width)
 
     def update_status(self, message, progress_value):
-        self.status_label.config(text=message)
         self.progress['value'] = progress_value
         self.window.update()
         
@@ -414,21 +378,19 @@ class AudioMerger:
                 self.output_path = os.path.dirname(self.selected_files[0])
                 logging.debug(f"Output path set to: {self.output_path}")
                 
-
-
-
-
                 # Создаем интерфейс только после выбора файлов
                 if not self.interface_created:
                     self.create_widgets()
+                    self.update_min_size()  # Устанавливаем фиксированный размер
                     self.window.deiconify()  # Показываем окно
                 
-
+                # Сбрасываем интерфейс при выборе новых файлов
+                if hasattr(self, 'filename_entry'):
+                    self.reset_for_new_merge()
+                
                 # Показываем информацию о файлах
                 self.show_files_info()
                 
-
-
                 # Запускаем процесс загрузки файлов
                 self.window.after(200, self.load_files)
                 
@@ -455,15 +417,15 @@ class AudioMerger:
     def show_files_info(self):
         """Показывает информацию о выбранных файлах"""
         files_count = len(self.selected_files)
-        files_names = [f"[{os.path.basename(f)}]" for f in self.selected_files]
+        files_names = [f"{os.path.basename(f)}" for f in self.selected_files]
         folder_path = os.path.dirname(self.selected_files[0])
         
-        # Разделяем на два лейбла: информация и список файлов
-        info_text = f"Selected {files_count} files from {folder_path}:"
+        # Объединяем всю информацию в одну строку
         files_text = ', '.join(files_names)
+        full_text = f"Selected {files_count} files from {folder_path}: {files_text}"
         
-        self.files_info_label.config(text=info_text)
-        self.files_list_label.config(text=files_text)
+        # Полностью обновляем лейбл
+        self.files_info_label.config(text=full_text)
 
     def check_for_duplicates(self):
         """Проверяет файлы на дубликаты по размеру и содержимому"""
@@ -542,8 +504,12 @@ class AudioMerger:
         # Отключить кнопку выбора во время загрузки
         self.select_btn.config(state='disabled')
         
-        # Показать прогрессбар
-        self.progress_frame.grid()
+        # Кнопка merge уже показана, просто отключаем её
+        self.merge_btn.config(state='disabled')
+        
+        # Скрыть поле ввода и показать прогрессбар на его месте
+        self.filename_entry.grid_remove()
+        self.progress.grid()
         self.progress['value'] = 0
         
         try:
@@ -592,10 +558,9 @@ class AudioMerger:
                 time.sleep(0.05)  # Уменьшили время для более быстрой загрузки
             
             logging.info("Files loaded successfully")
-            self.update_status("Files loaded successfully!", 100)
             
-            # Небольшая пауза перед показом интерфейса объединения
-            self.window.after(500, self.show_merge_interface)
+            # Показываем интерфейс объединения сразу
+            self.show_merge_interface()
             
         except Exception as e:
             logging.error("Error during files loading:")
@@ -607,11 +572,17 @@ class AudioMerger:
 
     def show_merge_interface(self):
         """Показывает интерфейс для объединения после загрузки файлов"""
-        # Скрыть прогрессбар загрузки
-        self.progress_frame.grid_remove()
+        # Скрыть прогрессбар
+        self.progress.grid_remove()
         
-        # Показать кнопку объединения
-        self.merge_frame.grid()
+        # Показать поле ввода на месте прогрессбара
+        self.filename_entry.grid()
+        
+        # Кнопка merge уже показана, просто включаем её
+        self.merge_btn.config(state='normal')
+        
+        # Включаем текстовое поле
+        self.filename_entry.config(state='normal')
         
         # Устанавливаем фокус на поле ввода и выделяем весь текст
         self.focus_filename_entry()
@@ -654,9 +625,9 @@ class AudioMerger:
         
         logging.info("Starting file merge process")
         
-        # Показать прогресс, скрыть кнопку объединения
-        self.merge_frame.grid_remove()
-        self.progress_frame.grid()
+        # Показать прогресс, скрыть поле ввода
+        self.filename_entry.grid_remove()
+        self.progress.grid()
         self.progress['value'] = 0
         
         # Отключить кнопки во время обработки
@@ -714,88 +685,48 @@ class AudioMerger:
         finally:
             # Включить кнопки обратно
             self.select_btn.config(state='normal')
-            self.filename_entry.config(state='disabled')  # Оставляем отключенным до нового объединения
-        
-        self.progress_frame.grid_remove()
-        self.merge_frame.grid()
+            # Не отключаем поле ввода здесь - это будет сделано в show_completion_message
 
     def show_completion_message(self, message, is_error=False):
-        """Показывает сообщение о завершении в интерфейсе"""
+        """Показывает сообщение о завершении в области ввода"""
         # Скрыть прогрессбар
-        self.progress_frame.grid_remove()
+        self.progress.grid_remove()
         
-        # Создать фрейм для сообщения о завершении
-        if not hasattr(self, 'completion_frame'):
-            self.completion_frame = ttk.Frame(self.merge_frame.master, style='Dark.TFrame')
-        
-        # Очистить фрейм
-        for widget in self.completion_frame.winfo_children():
-            widget.destroy()
-        
+        # Показать результат в области ввода
         if is_error:
-            # Для ошибок показываем весь текст обычным стилем
-            completion_label = ttk.Label(self.completion_frame, text=message, 
-                                       style='Dark.TLabel', justify='left',
-                                       font=('Segoe UI', 10))
-
-            completion_label.grid(row=0, column=0, pady=(0, 8), sticky='w')  # Уменьшили с 10 до 8
+            self.result_label.config(text=message, style='Dark.TLabel')
         else:
-            # Для успеха разделяем сообщение на части
+            # Для успеха показываем только первую строку (без пути к файлу)
             lines = message.split('\n')
-            
-
-            # Первая строка голубым цветом и жирным шрифтом
-            success_label = ttk.Label(self.completion_frame, text=lines[0], 
-                                    style='Success.TLabel', justify='left')
-
-            success_label.configure(font=('Segoe UI', 10, 'bold'))
-            success_label.grid(row=0, column=0, sticky='w')
-            
-            # Остальные строки обычным цветом
-            if len(lines) > 1:
-                remaining_text = '\n'.join(lines[1:])
-                details_label = ttk.Label(self.completion_frame, text=remaining_text, 
-                                        style='Dark.TLabel', justify='left',
-                                        font=('Segoe UI', 10))
-
-                details_label.grid(row=1, column=0, pady=(2, 8), sticky='w')  # Уменьшили с 10 до 8
-            else:
-                # Если только одна строка, добавляем отступ
-
-                success_label.grid(pady=(0, 8))  # Уменьшили с 10 до 8
+            self.result_label.config(text=lines[0], style='Success.TLabel')
         
-        # Кнопка для нового объединения
-        new_merge_btn = ttk.Button(self.completion_frame, text="Merge Again", 
-                                 command=self.reset_for_new_merge, style='Blue.TButton')
-        new_merge_btn.grid(row=2, column=0, sticky='ew')
+        self.result_label.grid()
         
-        # Показать фрейм завершения
-        self.completion_frame.grid(row=4, column=0, sticky='ew')
-        self.completion_frame.grid_columnconfigure(0, weight=1)
-        
-        # Обновить размер окна после добавления элементов
-        self.window.after(50, self.update_min_size)
+        # Включаем кнопку merge для повторного использования
+        self.merge_btn.config(state='normal')
 
     def reset_for_new_merge(self):
         """Сброс интерфейса для нового объединения"""
-        # Скрыть фрейм завершения
-        if hasattr(self, 'completion_frame'):
-            self.completion_frame.grid_remove()
+        # Скрыть результат и показать поле ввода
+        self.result_label.grid_remove()
+        self.filename_entry.grid()
         
         # Включить поле ввода обратно
         self.filename_entry.config(state='normal')
-        
-        # Показать обратно кнопку merge
-        self.merge_frame.grid()
+        self.filename_entry.delete(0, tk.END)  # Очищаем поле
         
         # Установить фокус на поле ввода
         self.focus_filename_entry()
+    
+    def run(self):
+        """Запуск приложения"""
+        self.window.mainloop()
 
 if __name__ == "__main__":
     logging.info("Starting application")
     try:
         app = AudioMerger()
-        app.window.mainloop()
+        app.run()
     except Exception as e:
         logging.critical("Application crashed:")
         logging.critical(traceback.format_exc())

@@ -1,0 +1,14 @@
+список файлов теперь по левому краю.
+список выделен жирным шрифтом.
+изменил цвет кнопок.
+исправлена проблема с повторной обработкой файлов.
+доработан интерфейс, он стал более компактным.
+
+nuitka --onefile --plugin-enable=tk-inter --windows-disable-console ^
+  --windows-company-name="Hasan Gafirov" ^
+  --windows-product-name="smerge" ^
+  --windows-file-version="0.1.0" ^
+  --windows-product-version="0.1.0" ^
+  --windows-file-description="Merges audio files without conversion or quality loss" ^
+  --windows-icon-from-ico=icon.ico ^
+  smerge.py
